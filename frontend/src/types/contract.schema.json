@@ -1,0 +1,695 @@
+{
+  "$defs": {
+    "AgentEvent": {
+      "properties": {
+        "type": {
+          "const": "agent_event",
+          "default": "agent_event",
+          "type": "string"
+        },
+        "agent_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "action": {
+          "type": "string"
+        },
+        "source_zone": {
+          "$ref": "#/$defs/Zone"
+        },
+        "target_zone": {
+          "$ref": "#/$defs/Zone"
+        },
+        "status_text": {
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/AgentState"
+        },
+        "metrics": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "type": "object"
+        },
+        "handoff": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Handoff"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "ts": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "agent_id",
+        "task_id",
+        "action",
+        "source_zone",
+        "target_zone",
+        "status_text",
+        "state",
+        "metrics",
+        "handoff",
+        "ts"
+      ],
+      "title": "AgentEvent",
+      "type": "object"
+    },
+    "AgentProfile": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "home_zone": {
+          "$ref": "#/$defs/Zone"
+        },
+        "model_tier": {
+          "enum": [
+            "fast",
+            "standard",
+            "strong"
+          ],
+          "type": "string"
+        },
+        "channels": {
+          "items": {
+            "enum": [
+              "rest",
+              "mcp"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "color": {
+          "type": "string"
+        },
+        "character": {
+          "default": "",
+          "type": "string"
+        },
+        "workflow": {
+          "default": "",
+          "type": "string"
+        },
+        "knowledge": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "templates": {
+          "items": {
+            "$ref": "#/$defs/TaskTemplate"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "default": true,
+          "type": "boolean"
+        },
+        "tools": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "skills": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "memory_enabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "autonomy": {
+          "default": "approve_writes",
+          "enum": [
+            "approve_writes",
+            "approve_destructive",
+            "autonomous"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "title",
+        "home_zone",
+        "model_tier",
+        "channels",
+        "color",
+        "character",
+        "workflow",
+        "knowledge",
+        "templates",
+        "enabled",
+        "tools",
+        "skills",
+        "memory_enabled",
+        "autonomy"
+      ],
+      "title": "AgentProfile",
+      "type": "object"
+    },
+    "AgentState": {
+      "enum": [
+        "IDLE",
+        "TRAVELING",
+        "BUSY",
+        "NEEDS_HELP",
+        "ERROR"
+      ],
+      "title": "AgentState",
+      "type": "string"
+    },
+    "AgentStatus": {
+      "properties": {
+        "agent_id": {
+          "type": "string"
+        },
+        "zone": {
+          "$ref": "#/$defs/Zone"
+        },
+        "state": {
+          "$ref": "#/$defs/AgentState"
+        },
+        "status_text": {
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metrics": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "agent_id",
+        "zone",
+        "state",
+        "status_text",
+        "task_id",
+        "metrics"
+      ],
+      "title": "AgentStatus",
+      "type": "object"
+    },
+    "ApprovalOut": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "agent_id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "status": {
+          "$ref": "#/$defs/ApprovalStatus"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "decided_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "task_id",
+        "agent_id",
+        "action",
+        "summary",
+        "details",
+        "status",
+        "comment",
+        "created_at",
+        "decided_at"
+      ],
+      "title": "ApprovalOut",
+      "type": "object"
+    },
+    "ApprovalStatus": {
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "title": "ApprovalStatus",
+      "type": "string"
+    },
+    "ApprovalUpdatedMsg": {
+      "properties": {
+        "type": {
+          "const": "approval_updated",
+          "default": "approval_updated",
+          "type": "string"
+        },
+        "approval": {
+          "$ref": "#/$defs/ApprovalOut"
+        }
+      },
+      "required": [
+        "type",
+        "approval"
+      ],
+      "title": "ApprovalUpdatedMsg",
+      "type": "object"
+    },
+    "GovernorMsg": {
+      "properties": {
+        "type": {
+          "const": "governor",
+          "default": "governor",
+          "type": "string"
+        },
+        "stats": {
+          "$ref": "#/$defs/GovernorStats"
+        }
+      },
+      "required": [
+        "type",
+        "stats"
+      ],
+      "title": "GovernorMsg",
+      "type": "object"
+    },
+    "GovernorStats": {
+      "properties": {
+        "calls_in_window": {
+          "type": "integer"
+        },
+        "window_limit": {
+          "type": "integer"
+        },
+        "window_s": {
+          "type": "number"
+        },
+        "in_flight": {
+          "type": "integer"
+        },
+        "max_concurrent": {
+          "type": "integer"
+        },
+        "queued": {
+          "type": "integer"
+        },
+        "daily_used": {
+          "type": "integer"
+        },
+        "daily_quota": {
+          "type": "integer"
+        },
+        "by_channel": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "calls_in_window",
+        "window_limit",
+        "window_s",
+        "in_flight",
+        "max_concurrent",
+        "queued",
+        "daily_used",
+        "daily_quota",
+        "by_channel"
+      ],
+      "title": "GovernorStats",
+      "type": "object"
+    },
+    "Handoff": {
+      "description": "One agent handing work to another: the two meet and exchange these lines.",
+      "properties": {
+        "to_agent_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "line_from": {
+          "type": "string"
+        },
+        "line_to": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "to_agent_id",
+        "task_id",
+        "line_from",
+        "line_to"
+      ],
+      "title": "Handoff",
+      "type": "object"
+    },
+    "SnapshotMsg": {
+      "properties": {
+        "type": {
+          "const": "snapshot",
+          "default": "snapshot",
+          "type": "string"
+        },
+        "agents": {
+          "items": {
+            "$ref": "#/$defs/AgentProfile"
+          },
+          "type": "array"
+        },
+        "statuses": {
+          "items": {
+            "$ref": "#/$defs/AgentStatus"
+          },
+          "type": "array"
+        },
+        "tasks": {
+          "items": {
+            "$ref": "#/$defs/TaskOut"
+          },
+          "type": "array"
+        },
+        "approvals": {
+          "items": {
+            "$ref": "#/$defs/ApprovalOut"
+          },
+          "type": "array"
+        },
+        "governor": {
+          "$ref": "#/$defs/GovernorStats"
+        },
+        "marketo_mode": {
+          "enum": [
+            "demo",
+            "live"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "agents",
+        "statuses",
+        "tasks",
+        "approvals",
+        "governor",
+        "marketo_mode"
+      ],
+      "title": "SnapshotMsg",
+      "type": "object"
+    },
+    "TaskDeletedMsg": {
+      "properties": {
+        "type": {
+          "const": "task_deleted",
+          "default": "task_deleted",
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "task_id"
+      ],
+      "title": "TaskDeletedMsg",
+      "type": "object"
+    },
+    "TaskOut": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "agent_id": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/TaskStatus"
+        },
+        "params": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "result": {
+          "type": "string"
+        },
+        "scheduled_for": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "run": {
+          "default": 0,
+          "type": "integer"
+        },
+        "history": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "archived_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "agent_id",
+        "status",
+        "params",
+        "result",
+        "scheduled_for",
+        "schedule_id",
+        "run",
+        "history",
+        "archived_at",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "TaskOut",
+      "type": "object"
+    },
+    "TaskStatus": {
+      "enum": [
+        "queued",
+        "in_progress",
+        "needs_approval",
+        "done",
+        "failed"
+      ],
+      "title": "TaskStatus",
+      "type": "string"
+    },
+    "TaskTemplate": {
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "type": "string"
+        },
+        "params": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "params"
+      ],
+      "title": "TaskTemplate",
+      "type": "object"
+    },
+    "TaskUpdatedMsg": {
+      "properties": {
+        "type": {
+          "const": "task_updated",
+          "default": "task_updated",
+          "type": "string"
+        },
+        "task": {
+          "$ref": "#/$defs/TaskOut"
+        }
+      },
+      "required": [
+        "type",
+        "task"
+      ],
+      "title": "TaskUpdatedMsg",
+      "type": "object"
+    },
+    "Zone": {
+      "enum": [
+        "database",
+        "campaigns",
+        "design_studio",
+        "break_room"
+      ],
+      "title": "Zone",
+      "type": "string"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "agent_event": "#/$defs/AgentEvent",
+      "approval_updated": "#/$defs/ApprovalUpdatedMsg",
+      "governor": "#/$defs/GovernorMsg",
+      "snapshot": "#/$defs/SnapshotMsg",
+      "task_deleted": "#/$defs/TaskDeletedMsg",
+      "task_updated": "#/$defs/TaskUpdatedMsg"
+    },
+    "propertyName": "type"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/SnapshotMsg"
+    },
+    {
+      "$ref": "#/$defs/AgentEvent"
+    },
+    {
+      "$ref": "#/$defs/TaskUpdatedMsg"
+    },
+    {
+      "$ref": "#/$defs/TaskDeletedMsg"
+    },
+    {
+      "$ref": "#/$defs/ApprovalUpdatedMsg"
+    },
+    {
+      "$ref": "#/$defs/GovernorMsg"
+    }
+  ],
+  "title": "ServerMessage"
+}

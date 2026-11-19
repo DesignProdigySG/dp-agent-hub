@@ -1,0 +1,254 @@
+@import 'tailwindcss';
+
+/*
+ * Skinning Engine: every color in the shell AND the 3D scene comes from these tokens.
+ * Add a preset by defining a new [data-theme] block; SpatialView reads the same variables.
+ */
+:root,
+[data-theme='baseline'] {
+  color-scheme: light;
+  --md-primary: #5c4ee5;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #e5deff;
+  --md-on-primary-container: #1b0c6b;
+  --md-secondary-container: #e4e0f2;
+  --md-on-secondary-container: #1d1a2b;
+  --md-surface: #fcf8ff;
+  --md-surface-dim: #ece6f4;
+  --md-surface-container: #f2ecfa;
+  --md-surface-container-high: #ebe5f3;
+  --md-surface-container-highest: #e5dfed;
+  --md-on-surface: #1c1b22;
+  --md-on-surface-variant: #48454f;
+  --md-outline: #79757f;
+  --md-outline-variant: #cac4d0;
+  --md-error: #ba1a1a;
+  --md-on-error: #ffffff;
+  --md-error-container: #ffdad6;
+  --md-success: #1b7f4b;
+  --md-warning: #b26a00;
+  --scene-bg: #ece6f4;
+  --scene-floor: #ddd6e8;
+  --zone-database: #b9e3d8;
+  --zone-campaigns: #c8d6f6;
+  --zone-design_studio: #f6d6c5;
+  --zone-break_room: #ece0b8;
+  /* charts: validated categorical order (blue, orange, aqua, yellow) + recessive chrome */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #c3c2b7;
+  --viz-muted: #6f6d68;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --md-primary: #c7bfff;
+  --md-on-primary: #2d1f99;
+  --md-primary-container: #4436c9;
+  --md-on-primary-container: #e5deff;
+  --md-secondary-container: #48455a;
+  --md-on-secondary-container: #e4e0f2;
+  --md-surface: #141318;
+  --md-surface-dim: #0f0e13;
+  --md-surface-container: #201f25;
+  --md-surface-container-high: #2b2930;
+  --md-surface-container-highest: #36343b;
+  --md-on-surface: #e6e1e9;
+  --md-on-surface-variant: #cac4d0;
+  --md-outline: #938f99;
+  --md-outline-variant: #49454f;
+  --md-error: #ffb4ab;
+  --md-on-error: #690005;
+  --md-error-container: #93000a;
+  --md-success: #7fdba5;
+  --md-warning: #ffb95c;
+  --scene-bg: #0f0e13;
+  --scene-floor: #1d1b24;
+  --zone-database: #1f4d44;
+  --zone-campaigns: #263a66;
+  --zone-design_studio: #5e3524;
+  --zone-break_room: #4f4524;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --viz-grid: #2c2c2a;
+  --viz-axis: #383835;
+  --viz-muted: #9b9992;
+}
+
+[data-theme='forest'] {
+  color-scheme: light;
+  --md-primary: #2f6b3a;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #b4f1b8;
+  --md-on-primary-container: #002109;
+  --md-secondary-container: #d5e8d1;
+  --md-on-secondary-container: #111f10;
+  --md-surface: #f7fbf2;
+  --md-surface-dim: #d8dbd3;
+  --md-surface-container: #ecefe7;
+  --md-surface-container-high: #e6e9e1;
+  --md-surface-container-highest: #e0e4dc;
+  --md-on-surface: #181d17;
+  --md-on-surface-variant: #424940;
+  --md-outline: #72796f;
+  --md-outline-variant: #c2c8bd;
+  --md-error: #ba1a1a;
+  --md-on-error: #ffffff;
+  --md-error-container: #ffdad6;
+  --md-success: #1b7f4b;
+  --md-warning: #8a5a00;
+  --scene-bg: #e0e4dc;
+  --scene-floor: #cdd5c8;
+  --zone-database: #a9dcc4;
+  --zone-campaigns: #c3d7e8;
+  --zone-design_studio: #ead7b5;
+  --zone-break_room: #d8e3a8;
+  /* charts: validated categorical order (blue, orange, aqua, yellow) + recessive chrome */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #c3c2b7;
+  --viz-muted: #6f6d68;
+}
+
+@theme inline {
+  --font-sans: 'Roboto Flex', ui-sans-serif, system-ui, sans-serif;
+  --color-primary: var(--md-primary);
+  --color-on-primary: var(--md-on-primary);
+  --color-primary-container: var(--md-primary-container);
+  --color-on-primary-container: var(--md-on-primary-container);
+  --color-secondary-container: var(--md-secondary-container);
+  --color-on-secondary-container: var(--md-on-secondary-container);
+  --color-surface: var(--md-surface);
+  --color-surface-dim: var(--md-surface-dim);
+  --color-surface-container: var(--md-surface-container);
+  --color-surface-container-high: var(--md-surface-container-high);
+  --color-surface-container-highest: var(--md-surface-container-highest);
+  --color-on-surface: var(--md-on-surface);
+  --color-on-surface-variant: var(--md-on-surface-variant);
+  --color-outline: var(--md-outline);
+  --color-outline-variant: var(--md-outline-variant);
+  --color-error: var(--md-error);
+  --color-on-error: var(--md-on-error);
+  --color-error-container: var(--md-error-container);
+  --color-success: var(--md-success);
+  --color-warning: var(--md-warning);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-rounded {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'opsz' 24;
+  font-size: 20px;
+  line-height: 1;
+  user-select: none;
+}
+.material-symbols-rounded.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'opsz' 24;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--md-error) 60%, transparent); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+.needs-help-pulse {
+  animation: pulse-ring 1.4s ease-out infinite;
+}
+/* Sims-style thought clouds over agents (views/spatial/thoughts.ts) */
+.thought-cloud {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 38px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  animation: thought-pop 0.3s ease-out, thought-bob 2.4s ease-in-out 0.3s infinite;
+}
+.thought-cloud::before,
+.thought-cloud::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  border-radius: 999px;
+  background: #fff;
+}
+.thought-cloud::before { width: 24px; height: 24px; top: -9px; left: 5px; }
+.thought-cloud::after { width: 20px; height: 20px; top: -6px; right: 4px; }
+.thought-trail,
+.thought-trail::after {
+  position: absolute;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}
+.thought-trail { width: 9px; height: 9px; bottom: -11px; left: 50%; margin-left: -9px; }
+.thought-trail::after { content: ''; width: 5px; height: 5px; bottom: -7px; left: 5px; }
+.thought-help { animation: thought-pop 0.3s ease-out, thought-urgent 1s ease-in-out infinite; }
+.thought-error { background: #c9ccd6; }
+.thought-error::before, .thought-error::after, .thought-error .thought-trail, .thought-error .thought-trail::after { background: #c9ccd6; }
+.thought-working .material-symbols-rounded { animation: thought-think 1.6s ease-in-out infinite; }
+@keyframes thought-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes thought-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes thought-urgent {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+@keyframes thought-think {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+
+@keyframes speech-pop {
+  from { opacity: 0; transform: translateY(6px) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+.speech-pop {
+  animation: speech-pop 0.25s ease-out;
+}
+
+/* Markdown editor (components/MarkdownEditor.tsx): the same look as rendered Markdown */
+.md-editor > * + * { margin-top: 0.5rem; }
+.md-editor h1 { font-size: 1rem; font-weight: 600; }
+.md-editor h2, .md-editor h3, .md-editor h4 { font-size: 0.875rem; font-weight: 600; margin-top: 0.75rem; }
+.md-editor ul { list-style: disc; padding-left: 1.25rem; }
+.md-editor ol { list-style: decimal; padding-left: 1.25rem; }
+.md-editor li > p { margin: 0; }
+.md-editor a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 2px; }
+.md-editor code { border-radius: 0.25rem; background: var(--color-surface-container-highest); padding: 0.05rem 0.25rem; font-size: 0.85em; }
+.md-editor pre { border-radius: 0.75rem; background: var(--color-surface-container-highest); padding: 0.5rem; font-size: 0.75rem; overflow-x: auto; }
+.md-editor pre code { background: none; padding: 0; }
+.md-editor blockquote { border-left: 2px solid var(--color-outline-variant); padding-left: 0.75rem; color: var(--color-on-surface-variant); }
+.md-editor hr { border-color: var(--color-outline-variant); }
+.md-editor table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.md-editor th, .md-editor td { border: 1px solid var(--color-outline-variant); padding: 0.25rem 0.5rem; text-align: left; vertical-align: top; }
+.md-editor th { background: var(--color-surface-container-highest); font-weight: 500; }
+.md-editor p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; height: 0; pointer-events: none; color: var(--color-on-surface-variant); opacity: 0.7; }

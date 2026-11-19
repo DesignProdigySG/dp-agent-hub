@@ -1,0 +1,9 @@
+{
+  "name": "Example Co",
+  "from_name": "Example Co Events",
+  "from_email": "events@example.com",
+  "reply_email": "events@example.com",
+  "footer_address": "1 Example Street, Springfield",
+  "privacy_url": "https://www.example.com/privacy",
+  "banned_words": ["click here", "revolutionary", "game-changing", "synergy"]
+}

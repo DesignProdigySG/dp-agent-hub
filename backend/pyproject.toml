@@ -1,0 +1,57 @@
+[project]
+name = "marketo-agent-hub"
+version = "0.1.0"
+description = "Backend harness for the Marketo AI Agent Hub: FastAPI bridge + LangGraph agents"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "sqlmodel>=0.0.22",
+    "httpx>=0.27",
+    "dnspython>=2.6",
+    "pypdf>=5",  # task attachments: text from PDFs
+    "python-docx>=1.1",  # task attachments: text from Word documents  # data health scan: does an email domain accept mail (MX)
+    "python-multipart>=0.0.20",  # form posts on the approval link pages
+    "langgraph>=1.0",
+    "langgraph-checkpoint-sqlite>=3.0",
+    "langgraph-checkpoint-postgres>=3.0",
+    "aiosqlite>=0.20",
+    "langchain-core>=1.0",
+    "langchain>=1.4",  # create_agent + middleware (agents/custom.py)
+    "langchain-mcp-adapters>=0.3",
+    # storage
+    "psycopg[binary,pool]>=3.2",
+    "alembic>=1.14",
+    "azure-storage-file-datalake>=12.17",
+    "azure-identity>=1.19",
+    # secrets at rest
+    "cryptography>=43",
+    # LLM router: Claude via the official SDK, every other provider via LiteLLM
+    "anthropic>=2.4",
+    "litellm>=1.70",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.7"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = ["live: calls a real LLM (run with -m live and LIVE_ANTHROPIC_API_KEY)"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

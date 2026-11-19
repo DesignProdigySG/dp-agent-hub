@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17  # Postgres 17 + the pgvector extension (knowledge search)
+    environment:
+      POSTGRES_DB: hub
+      POSTGRES_USER: hub
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hub_dev_only}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5442:5432"  # localhost only; 5442 avoids clashing with a local Postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hub -d hub"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    # Bootstrap settings only. Everything else (Marketo, LLM keys, Data Streams, Data Lake)
+    # is configured in the app's Settings page and stored encrypted in Postgres; values in
+    # .env still work as defaults.
+    environment:
+      DATABASE_URL: postgresql://hub:${POSTGRES_PASSWORD:-hub_dev_only}@postgres:5432/hub
+      HUB_SECRET_KEY: ${HUB_SECRET_KEY:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      CORS_ORIGINS: '["http://localhost:5180"]'
+      MARKETO_MODE: ${MARKETO_MODE:-demo}
+      MARKETO_MUNCHKIN_ID: ${MARKETO_MUNCHKIN_ID:-}
+      MARKETO_CLIENT_ID: ${MARKETO_CLIENT_ID:-}
+      MARKETO_CLIENT_SECRET: ${MARKETO_CLIENT_SECRET:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+    volumes:
+      - hub-data:/data  # holds secret.key when HUB_SECRET_KEY is not set
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    environment:
+      BACKEND_URL: http://backend:8000
+      VITE_HOST: 0.0.0.0  # listen inside the container; published on localhost below
+    ports:
+      - "127.0.0.1:5180:5180"
+    depends_on:
+      - backend
+
+  # Optional local LLM: docker compose --profile ollama up
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+
+volumes:
+  pg-data:
+  hub-data:
+  ollama:

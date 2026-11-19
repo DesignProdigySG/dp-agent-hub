@@ -1,0 +1,20 @@
+{
+  "images": [
+    {
+      "id": "conference-hall",
+      "url": "https://images.example.com/brand/conference-hall.jpg",
+      "alt": "A bright conference hall with people taking their seats",
+      "tags": ["event", "conference", "people"],
+      "uses": ["hero", "event", "email-header"],
+      "photographer": "Example Co"
+    },
+    {
+      "id": "team-at-work",
+      "url": "https://images.example.com/brand/team-at-work.jpg",
+      "alt": "Three colleagues around a laptop",
+      "tags": ["team", "office", "product"],
+      "uses": ["section", "product", "email-body"],
+      "photographer": "Example Co"
+    }
+  ]
+}
