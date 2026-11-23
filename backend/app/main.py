@@ -4,9 +4,7 @@ from contextlib import AsyncExitStack, asynccontextmanager
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
-from langgraph.store.postgres.aio import AsyncPostgresStore
 from langgraph.store.sqlite.aio import AsyncSqliteStore
 
 from app import knowledge
@@ -39,6 +37,9 @@ log = logging.getLogger("app")
 def checkpointer_for(settings):
     """Paused agent runs (awaiting approval) persist in the same database as everything else."""
     if settings.is_postgres:
+        # Imported lazily so SQLite-only setups don't need the psycopg/libpq binaries.
+        from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+
         return AsyncPostgresSaver.from_conn_string(settings.libpq_url)
     return AsyncSqliteSaver.from_conn_string(str(settings.data_dir / "checkpoints.db"))
 
@@ -46,6 +47,8 @@ def checkpointer_for(settings):
 def store_for(settings):
     """LangGraph's long-term store, which holds agent memories."""
     if settings.is_postgres:
+        from langgraph.store.postgres.aio import AsyncPostgresStore
+
         return AsyncPostgresStore.from_conn_string(settings.libpq_url)
     return AsyncSqliteStore.from_conn_string(str(settings.data_dir / "store.db"))
 

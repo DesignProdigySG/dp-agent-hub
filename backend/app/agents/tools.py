@@ -28,7 +28,7 @@ from langchain_core.tools import BaseTool, StructuredTool, tool
 from pydantic import BaseModel, Field
 from sqlmodel import select
 
-from app import analytics, attachments, design, handoff, knowledge
+from app import analytics, attachments, design, handoff, knowledge, websearch
 from app.db import Skill, Task, session
 from app.deps import get_deps
 from app.events.schema import TaskUpdatedMsg, Zone, utcnow
@@ -104,6 +104,16 @@ async def kpi_history(days: int = 30,
 
 
 # --- Marketo REST tools -----------------------------------------------------------------------
+
+@tool
+async def web_search(query: str, count: int = 10, freshness: str | None = None) -> list:
+    """Search the web (Brave Search). Returns up to 20 results with title, url, description
+    and age. freshness limits recency: "pd" day, "pw" week, "pm" month, "py" year."""
+    try:
+        return await websearch.brave_search(query, count, freshness)
+    except websearch.SearchError as e:
+        return [{"error": str(e)}]
+
 
 DEFAULT_LEAD_FIELDS = ["id", "email", "firstName", "lastName", "company", "title"]
 
@@ -281,6 +291,7 @@ HUB_TOOLS: list[BaseTool] = [
     _tag(recent_activities, "read", "Hub data", Zone.DATABASE),
     _tag(lead_engagement, "read", "Hub data", Zone.DATABASE),
     _tag(kpi_history, "read", "Hub data", None),
+    _tag(web_search, "read", "Web", Zone.CAMPAIGNS),
     _tag(rest_get_leads, "read", "Marketo REST", Zone.DATABASE),
     _tag(rest_update_leads, "write", "Marketo REST", Zone.DATABASE),
     _tag(rest_add_leads_to_list, "write", "Marketo REST", Zone.CAMPAIGNS),

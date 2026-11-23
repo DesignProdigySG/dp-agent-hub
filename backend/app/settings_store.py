@@ -57,6 +57,8 @@ GROUPS: list[tuple[str, str, str]] = [
     ("datalake", "Azure Data Lake", "Archive raw activity events and daily snapshots."),
     ("notifications", "Approval notifications",
      "Tell reviewers when an agent needs approval, with one-tap Approve / Reject links."),
+    ("websearch", "Web search",
+     "Lets agents search the web (Brave Search) to research companies and prospects."),
     ("verification", "Email & phone verification",
      "Paid checks the Data Doctor runs when its ZeroBounce / Twilio skills are attached. "
      "Results are cached, so a value is never paid for twice."),
@@ -146,6 +148,8 @@ FIELDS: list[FieldSpec] = [
     FieldSpec("smtp_security", "email", "Security", "select", options=["starttls", "ssl", "none"]),
     FieldSpec("smtp_username", "email", "Username"),
     FieldSpec("smtp_password", "email", "Password / app password", "secret"),
+    FieldSpec("brave_api_key", "websearch", "Brave Search API key", "secret",
+              "brave.com/search/api. Used by the web_search tool."),
     FieldSpec("zerobounce_api_key", "verification", "ZeroBounce API key", "secret",
               "zerobounce.net > API. About USD 0.008 per email; only emails that pass the free "
               "checks are sent."),

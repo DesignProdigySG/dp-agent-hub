@@ -6,6 +6,8 @@ creates the agent if it doesn't exist yet. Everything stays editable on the Agen
     python -m app.presets data_doctor        # a Data Doctor agent
     python -m app.presets data_health_scan   # add the full data health scan to it
     python -m app.presets designer           # a Designer agent (uses backend/brand if present)
+    python -m app.presets lead_finder        # a Lead Finder (needs a Brave Search key)
+    python -m app.presets icp_finder         # an ICP Finder: client brief -> target companies
 
 An "add-on" preset (`addon=True`) never replaces anything: it adds its skills and its task
 template to an existing agent and leaves the rest of the agent as it is.
@@ -157,9 +159,58 @@ DESIGNER = Preset(
     ],
 )
 
+LEAD_FINDER = Preset(
+    agent={
+        "id": "lead_finder",
+        "name": "Lead Finder",
+        "title": "Researches new prospects on the web",
+        "color": "#e76f51",
+        "character": "the-data-doctor",
+        "home_zone": Zone.CAMPAIGNS,
+        "model_tier": "standard",
+        "instructions": _text("lead_finder"),
+        "max_steps": 30,
+        "templates": [TaskTemplate(
+            title="Find prospects",
+            description="Find 10 prospects that fit this profile: [industry, company size, "
+                        "region, job titles]. Rank them and say why each fits.",
+        )],
+    },
+    tools=["web_search", "rest_get_leads"],
+)
+
+ICP_FINDER = Preset(
+    agent={
+        "id": "icp_finder",
+        "name": "ICP Finder",
+        "title": "Turns a client brief into a ranked list of target companies",
+        "color": "#8e6bbf",
+        "character": "the-data-doctor",
+        "home_zone": Zone.CAMPAIGNS,
+        "model_tier": "standard",
+        "instructions": _text("icp_finder"),
+        "max_steps": 40,
+        "templates": [TaskTemplate(
+            title="Find target companies for a client",
+            description=(
+                "Client: VAIO (example; replace with your client)\n"
+                "What they sell: premium lightweight, durable business laptops\n"
+                "Regions: Singapore, Malaysia, Indonesia, Thailand, Philippines, Vietnam\n"
+                "A worthwhile deal: 20+ units; bulk orders are best, small B2B orders still count\n"
+                "Exclude: consumers, companies under 10 staff, heavy BYOD companies\n"
+                "Ideas to start from (correct them): Japanese-owned regional offices, "
+                "mobile-heavy professional firms, engineering and design teams\n"
+                "How many: 20"),
+        )],
+    },
+    tools=["web_search", "rest_get_leads"],
+)
+
 PRESETS = {"data_doctor": DATA_DOCTOR,
            "data_health_scan": DATA_HEALTH_SCAN,
-           "designer": DESIGNER}
+           "designer": DESIGNER,
+           "lead_finder": LEAD_FINDER,
+           "icp_finder": ICP_FINDER}
 
 # What converting an existing agent to a workflow preset replaces; its identity (name,
 # character, color, home zone, enabled) is kept.

@@ -121,6 +121,9 @@ class Settings(BaseSettings):
     email_from: str = ""
     email_to: str = ""  # comma-separated reviewers
 
+    # Web search for agents that research prospects (the web_search tool)
+    brave_api_key: str = ""
+
     # Paid verification used by the Data Doctor's skills (only when the skill is attached)
     zerobounce_api_key: str = ""
     twilio_account_sid: str = ""
