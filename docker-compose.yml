@@ -1,5 +1,6 @@
 services:
   postgres:
+    restart: unless-stopped
     image: pgvector/pgvector:pg17  # Postgres 17 + the pgvector extension (knowledge search)
     environment:
       POSTGRES_DB: hub
@@ -16,6 +17,7 @@ services:
       retries: 20
 
   backend:
+    restart: unless-stopped
     build: ./backend
     # Bootstrap settings only. Everything else (Marketo, LLM keys, Data Streams, Data Lake)
     # is configured in the app's Settings page and stored encrypted in Postgres; values in
@@ -41,9 +43,11 @@ services:
         condition: service_healthy
 
   frontend:
+    restart: unless-stopped
     build: ./frontend
     environment:
       BACKEND_URL: http://backend:8000
+      VITE_ALLOWED_HOSTS: ${VITE_ALLOWED_HOSTS:-}  # public hostname when served behind a tunnel
       VITE_HOST: 0.0.0.0  # listen inside the container; published on localhost below
     ports:
       - "127.0.0.1:5180:5180"
