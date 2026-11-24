@@ -108,7 +108,7 @@ async def lifespan(app: FastAPI):
             dispose_engine()
 
 
-app = FastAPI(title="Marketo AI Agent Hub", lifespan=lifespan)
+app = FastAPI(title="DP Agent Hub", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_settings().cors_origins,

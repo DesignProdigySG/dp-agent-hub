@@ -58,7 +58,7 @@ export function TopNav() {
           <Icon name="hub" filled />
         </div>
         <div className="leading-tight">
-          <div className="text-[15px] font-semibold">Marketo Agent Hub</div>
+          <div className="text-[15px] font-semibold">DP Agent Hub</div>
           <div className="text-[11px] text-on-surface-variant">Operations console</div>
         </div>
       </div>

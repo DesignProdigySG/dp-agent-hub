@@ -146,7 +146,7 @@ def email_message(s: Settings, m: Message) -> EmailMessage:
            if m.detail_html else "")
         + f'{buttons}'
         f'<p style="color:#888;font-size:12px">Approve and Reject open a confirmation page '
-        f"in the Marketo AI Agent Hub.</p></div>", subtype="html")
+        f"in the DP Agent Hub.</p></div>", subtype="html")
     return msg
 
 
@@ -215,7 +215,7 @@ async def test(channel: str) -> dict[str, Any]:
     s = get_settings()
     if channel == "email" and not (s.smtp_host and s.email_from and s.email_recipients):
         return {"ok": False, "error": "SMTP server, from address and reviewers are required"}
-    m = Message(title="Test from the Marketo AI Agent Hub",
+    m = Message(title="Test from the DP Agent Hub",
                 text="Approval requests will arrive like this, with Approve / Reject links.",
                 facts=[("Links point to", s.hub_public_url)],
                 actions=[("Open the hub", f"{s.hub_public_url}/")], tone="good")

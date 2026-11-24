@@ -98,7 +98,7 @@ export function AuthScreen() {
             <Icon name="hub" filled />
           </div>
           <div>
-            <div className="font-semibold">Marketo Agent Hub</div>
+            <div className="font-semibold">DP Agent Hub</div>
             <div className="text-xs text-on-surface-variant">{auth.setupRequired ? 'First-run setup' : 'Admin sign-in'}</div>
           </div>
         </div>

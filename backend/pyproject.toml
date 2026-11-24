@@ -1,7 +1,7 @@
 [project]
 name = "marketo-agent-hub"
 version = "0.1.0"
-description = "Backend harness for the Marketo AI Agent Hub: FastAPI bridge + LangGraph agents"
+description = "Backend harness for the DP Agent Hub: FastAPI bridge + LangGraph agents"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",

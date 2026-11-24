@@ -37,8 +37,8 @@ async def custom_system_prompt(cfg: dict[str, Any], memories: list[dict[str, str
     mode = "live" if isinstance(get_deps().marketo, LiveMarketo) else "demo sandbox"
     parts = [
         f"You are {cfg['name']}" + (f", {cfg['title']}" if cfg.get("title") else "")
-        + f", an AI agent in the Marketo AI Agent Hub. You act on the operator's Marketo "
-        f"instance ({mode}) through the tools you are given, and nothing else.",
+        + ", an AI agent in the DP Agent Hub. You act only through the tools you are given, "
+        f"and nothing else. Any Marketo tools work on the operator's Marketo instance ({mode}).",
     ]
     if cfg.get("instructions", "").strip():
         parts.append("## Your instructions\n" + cfg["instructions"].strip())

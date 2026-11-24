@@ -49,7 +49,7 @@ background:var(--bg);color:var(--ink);padding:8px;font:inherit}}
 button{{border:0;border-radius:999px;padding:10px 20px;font:600 15px system-ui;color:#fff;
 cursor:pointer}} .approve{{background:var(--ok)}} .reject{{background:var(--no)}}
 </style></head><body><main><div class="card">{body}</div>
-<p class="muted" style="font-size:12px;text-align:center">Marketo AI Agent Hub</p>
+<p class="muted" style="font-size:12px;text-align:center">DP Agent Hub</p>
 </main></body></html>"""
     return HTMLResponse(doc, status_code=status, headers=HEADERS)
 
