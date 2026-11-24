@@ -1,8 +1,8 @@
-# Marketo Agent Hub (starter)
+# DP Agent Hub (starter)
 
 ## 1. What this is
 
-The Marketo Agent Hub is a web app where AI agents do Marketo work for you and you stay in control. You give an agent a job (instructions, the Marketo tools it may use, reference documents), hand it tasks on a board or a calendar, and it works through them. Before anything changes in Marketo, the agent stops and asks. You can approve, edit the change, approve part of it, or send it back with a note. A 3D office shows your agents walking between the Database, Campaigns, Design Studio and Break Room as they work, and an Insights page tracks what they did and what it cost.
+The DP Agent Hub is a web app where AI agents do work for you and you stay in control. You give an agent a job (instructions, the Marketo tools it may use, reference documents), hand it tasks on a board or a calendar, and it works through them. Before anything changes in Marketo, the agent stops and asks. You can approve, edit the change, approve part of it, or send it back with a note. A 3D office shows your agents walking between the Database, Campaigns, Design Studio and Break Room as they work, and an Insights page tracks what they did and what it cost. It was cloned from Josh's Marketo Agent Hub  starter and expanded to be a more general-purpose Agent Hub
 
 This is a starter. It has no ready-made agents tied to a particular company. Clone it, connect your Marketo sandbox, and build your own agents, either on the Agents page or by asking Claude Code to change the code.
 
