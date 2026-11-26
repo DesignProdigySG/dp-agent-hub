@@ -9,6 +9,13 @@ creates the agent if it doesn't exist yet. Everything stays editable on the Agen
     python -m app.presets lead_finder        # a Lead Finder (needs a Brave Search key)
     python -m app.presets icp_finder         # an ICP Finder: client brief -> target companies
 
+The Reader-First team (DP's moments-based messaging; fetch_page and the client library):
+
+    python -m app.presets reader_researcher  # client + persona -> a Reader Profile
+    python -m app.presets proof_librarian    # client material -> a tagged Proof Bank
+    python -m app.presets moment_scout       # target accounts -> verified moment cards
+    python -m app.presets moment_writer      # a moment -> LinkedIn, emails, exec brief, video
+
 An "add-on" preset (`addon=True`) never replaces anything: it adds its skills and its task
 template to an existing agent and leaves the rest of the agent as it is.
 
@@ -24,7 +31,7 @@ from typing import Any
 
 from sqlmodel import select
 
-from app import knowledge
+from app import client_library
 from app.agents import registry
 from app.db import AgentDef, KnowledgeDoc, Skill, audit, init_db, session
 from app.events.schema import TaskTemplate, Zone, utcnow
@@ -206,11 +213,160 @@ ICP_FINDER = Preset(
     tools=["web_search", "rest_get_leads"],
 )
 
+# --- Reader-First agents: research a client's buyers, spot moments, write for them ----------
+
+READER_FIRST_DOCS = [
+    {"title": "Reader-First Framework", "content": _text("reader_first_framework")},
+    {"title": "B2B Moments Library", "content": _text("moments_library")},
+]
+LENS_SKILLS = [
+    {"name": "lens_horizon",
+     "description": "Lens 1: the buyer's existing beliefs, past burns and the competitor "
+                    "clichés to ban (reviews, competitor homepages).",
+     "body": _text("lens_horizon")},
+    {"name": "lens_moment",
+     "description": "Lens 2: the triggers that make this persona act, the buying stage and "
+                    "their reading posture (case studies, forums).",
+     "body": _text("lens_moment")},
+    {"name": "lens_tribe",
+     "description": "Lens 3: the tribe's insider terms, the KPIs they're judged on and their "
+                    "hidden career risk (job descriptions).",
+     "body": _text("lens_tribe")},
+    {"name": "lens_gap",
+     "description": "Lens 4: the insight to reveal and what to hold back so a call feels "
+                    "natural (the client's deck and proof).",
+     "body": _text("lens_gap")},
+]
+FORMAT_SKILLS = [
+    {"name": "format_linkedin",
+     "description": "LinkedIn post or 6-8 slide carousel built from a moment hook and proof.",
+     "body": _text("format_linkedin")},
+    {"name": "format_email_3",
+     "description": "3-email outreach sequence: the moment, the proof, the gap.",
+     "body": _text("format_email_3")},
+    {"name": "format_exec_brief",
+     "description": "One-page executive briefing that arms the champion (Internal Sell).",
+     "body": _text("format_exec_brief")},
+    {"name": "format_video_script",
+     "description": "30-60 second video script with timings and two alternative hooks.",
+     "body": _text("format_video_script")},
+]
+
+READER_RESEARCHER = Preset(
+    agent={
+        "id": "reader_researcher",
+        "name": "Reader Researcher",
+        "title": "Researches how a client's buyers think (Reader-First)",
+        "color": "#457b9d",
+        "character": "the-private-investigator",
+        "home_zone": Zone.CAMPAIGNS,
+        "model_tier": "standard",
+        "instructions": _text("reader_researcher"),
+        "max_steps": 50,  # the hub's ceiling
+        "templates": [TaskTemplate(
+            title="Reader Profile for a client persona",
+            description=(
+                "Client: VAIO (example; replace with your client)\n"
+                "What they sell: premium lightweight, durable business laptops\n"
+                "Persona: IT Director / Head of IT at mid-size companies\n"
+                "Regions: Singapore and Malaysia\n"
+                "Competitors (correct them): Lenovo ThinkPad, Dell Latitude, HP EliteBook\n"
+                "Attach the client's deck if you have it."),
+        )],
+    },
+    docs=READER_FIRST_DOCS,
+    skills=LENS_SKILLS,
+    tools=["web_search", "fetch_page", "find_client_docs", "save_client_doc"],
+)
+
+PROOF_LIBRARIAN = Preset(
+    agent={
+        "id": "proof_librarian",
+        "name": "Proof Librarian",
+        "title": "Keeps each client's tagged proof bank",
+        "color": "#6a994e",
+        "character": "the-auditor",
+        "home_zone": Zone.DATABASE,
+        "model_tier": "standard",
+        "instructions": _text("proof_librarian"),
+        "max_steps": 40,
+        "templates": [TaskTemplate(
+            title="Build or update a client's proof bank",
+            description=(
+                "Client: VAIO (example; replace with your client)\n"
+                "Website: https://us.vaio.com (replace with the client's regional site)\n"
+                "Attach: case studies, decks, spec sheets, award or certification lists.\n"
+                "Focus: proof for IT Directors and Finance in SEA"),
+        )],
+    },
+    docs=READER_FIRST_DOCS,
+    tools=["fetch_page", "web_search", "find_client_docs", "save_client_doc"],
+)
+
+MOMENT_SCOUT = Preset(
+    agent={
+        "id": "moment_scout",
+        "name": "Moment Scout",
+        "title": "Spots fresh buyer moments across target accounts",
+        "color": "#f4a261",
+        "character": "the-qualifier",
+        "home_zone": Zone.CAMPAIGNS,
+        "model_tier": "standard",
+        "instructions": _text("moment_scout"),
+        "max_steps": 50,
+        "templates": [TaskTemplate(
+            title="Scan target accounts for moments",
+            description=(
+                "Client: VAIO (example; replace with your client)\n"
+                "Personas: IT Director, Finance Director\n"
+                "Accounts (paste a list or attach the ICP Finder CSV):\n"
+                "- Company A, website\n- Company B, website\n"
+                "Also scan: new regulations, budget cycles and events in Singapore/Malaysia\n"
+                "Look back: past month\n"
+                "Hand strong moments to the Moment Writer: yes / no"),
+        )],
+    },
+    docs=READER_FIRST_DOCS,
+    tools=["web_search", "fetch_page", "find_client_docs", "hand_off"],
+)
+
+MOMENT_WRITER = Preset(
+    agent={
+        "id": "moment_writer",
+        "name": "Moment Writer",
+        "title": "Writes reader-first content for a buyer moment",
+        "color": "#d1495b",
+        "character": "the-campaigner",
+        "home_zone": Zone.DESIGN_STUDIO,
+        "model_tier": "standard",
+        "instructions": _text("moment_writer"),
+        "max_steps": 40,
+        "templates": [TaskTemplate(
+            title="Write content for a moment",
+            description=(
+                "Client: VAIO (example; replace with your client)\n"
+                "Persona: IT Director\n"
+                "Moment: <what happened, with the link and date>\n"
+                "Account (optional): <company>\n"
+                "Formats: LinkedIn carousel, 3-email sequence, one-page exec brief, "
+                "video script (delete the ones you don't need)"),
+        )],
+    },
+    docs=READER_FIRST_DOCS,
+    skills=FORMAT_SKILLS,
+    tools=["find_client_docs", "save_client_doc"],
+)
+
 PRESETS = {"data_doctor": DATA_DOCTOR,
            "data_health_scan": DATA_HEALTH_SCAN,
            "designer": DESIGNER,
            "lead_finder": LEAD_FINDER,
-           "icp_finder": ICP_FINDER}
+           "icp_finder": ICP_FINDER,
+           "reader_researcher": READER_RESEARCHER,
+           "proof_librarian": PROOF_LIBRARIAN,
+           "moment_scout": MOMENT_SCOUT,
+           "moment_writer": MOMENT_WRITER}
+READER_FIRST = ("reader_researcher", "proof_librarian", "moment_scout", "moment_writer")
 
 # What converting an existing agent to a workflow preset replaces; its identity (name,
 # character, color, home zone, enabled) is kept.
@@ -231,18 +387,7 @@ def _upsert_skill(spec: dict[str, str]) -> str:
         return skill.id
 
 
-async def _upsert_doc(spec: dict[str, str]) -> str:
-    with session() as s:
-        doc = s.exec(select(KnowledgeDoc).where(KnowledgeDoc.title == spec["title"])).first()
-        if doc is None:
-            doc = KnowledgeDoc(**spec)
-        else:
-            doc.content, doc.updated_at = spec["content"], utcnow()
-        s.add(doc)
-        s.commit()
-        doc_id = doc.id
-    await knowledge.index_doc(doc_id)
-    return doc_id
+_upsert_doc = client_library.upsert_doc
 
 
 async def install(name: str) -> tuple[str, str]:

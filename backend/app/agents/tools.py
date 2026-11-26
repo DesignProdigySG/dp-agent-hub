@@ -28,7 +28,16 @@ from langchain_core.tools import BaseTool, StructuredTool, tool
 from pydantic import BaseModel, Field
 from sqlmodel import select
 
-from app import analytics, attachments, design, handoff, knowledge, websearch
+from app import (
+    analytics,
+    attachments,
+    client_library,
+    design,
+    handoff,
+    knowledge,
+    webfetch,
+    websearch,
+)
 from app.db import Skill, Task, session
 from app.deps import get_deps
 from app.events.schema import TaskUpdatedMsg, Zone, utcnow
@@ -113,6 +122,43 @@ async def web_search(query: str, count: int = 10, freshness: str | None = None) 
         return await websearch.brave_search(query, count, freshness)
     except websearch.SearchError as e:
         return [{"error": str(e)}]
+
+
+@tool
+async def fetch_page(url: str) -> dict:
+    """Read a public web page as plain text (up to 20,000 characters): reviews, competitor
+    homepages, case studies, job posts, forum threads. Returns url, title, text and whether
+    it was truncated. Logged-in sites (e.g. LinkedIn) can't be read."""
+    try:
+        return await webfetch.fetch_page(url)
+    except webfetch.FetchError as e:
+        return {"url": url, "error": str(e)}
+
+
+@tool
+async def find_client_docs(client: str, query: str = "") -> dict:
+    """Read what the team has saved about a client: Reader Profiles, Moment Library, Proof
+    Bank, Messaging Framework. Without a query, returns each document's text; with a query,
+    the best-matching passages. Always check this before researching or writing for a
+    client."""
+    return await client_library.find(client, query)
+
+
+@tool
+async def save_client_doc(client: str, kind: str, subject: str, content: str,
+                          runtime: ToolRuntime) -> dict:
+    """Save a document to the client's library (a person approves it first). kind: one of
+    "Reader Profile", "Moment Library", "Proof Bank", "Messaging Framework". subject: what it
+    covers within the client, e.g. the persona ("IT Director"); may be empty. content: the
+    whole document in Markdown, with source links. Saving the same client, kind and subject
+    replaces the earlier version, so include everything worth keeping."""
+    state = runtime.state
+    try:
+        return await client_library.save(client, kind, subject, content,
+                                          agent_id=state.get("agent_id"),
+                                          task_id=state.get("task_id"))
+    except client_library.LibraryError as e:
+        return {"error": str(e)}
 
 
 DEFAULT_LEAD_FIELDS = ["id", "email", "firstName", "lastName", "company", "title"]
@@ -292,6 +338,9 @@ HUB_TOOLS: list[BaseTool] = [
     _tag(lead_engagement, "read", "Hub data", Zone.DATABASE),
     _tag(kpi_history, "read", "Hub data", None),
     _tag(web_search, "read", "Web", Zone.CAMPAIGNS),
+    _tag(fetch_page, "read", "Web", Zone.CAMPAIGNS),
+    _tag(find_client_docs, "read", "Client library", None),
+    _tag(save_client_doc, "write", "Client library", None),
     _tag(rest_get_leads, "read", "Marketo REST", Zone.DATABASE),
     _tag(rest_update_leads, "write", "Marketo REST", Zone.DATABASE),
     _tag(rest_add_leads_to_list, "write", "Marketo REST", Zone.CAMPAIGNS),

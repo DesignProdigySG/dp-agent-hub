@@ -169,7 +169,8 @@ Install the sample agents on the server:
 
 ```bash
 cd /opt/marketo-agent-hub
-for p in data_doctor data_health_scan designer lead_finder icp_finder; do
+for p in data_doctor data_health_scan designer lead_finder icp_finder \
+         reader_researcher proof_librarian moment_scout moment_writer; do
   docker compose exec backend python -m app.presets $p
 done
 ```
